@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade calculator</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, serif; font-size: 15px; background: #f7f6f2; color: #1a1a18; padding: 2rem 1rem; min-height: 100vh; }
+  .container { max-width: 660px; margin: 0 auto; background: #fff; border: 1px solid #dddbd2; border-radius: 12px; padding: 2rem 2.5rem 2.5rem; }
+
+  h1 { font-size: 20px; font-weight: normal; border-bottom: 2px solid #1a1a18; padding-bottom: 1rem; margin-bottom: 1.75rem; }
+  h1 small { display: block; font-size: 13px; color: #6b6960; font-style: italic; margin-top: 3px; }
+
+  .sec { margin-bottom: 1.5rem; }
+  .sec-title { font-size: 11px; font-weight: bold; letter-spacing: .1em; text-transform: uppercase; color: #888780; margin-bottom: 10px; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-size: 13px; color: #4a4a45; }
+  .field input { height: 38px; border: 1px solid #ccc9be; border-radius: 6px; background: #faf9f6; color: #1a1a18; font-family: inherit; font-size: 14px; padding: 0 10px; width: 100%; transition: border-color .15s; }
+  .field input:focus { outline: none; border-color: #2c5f8a; background: #fff; }
+  .field input[readonly] { background: #f0ede6; color: #6b6960; cursor: default; font-size: 11px; font-family: 'Courier New', monospace; }
+
+  .badge { display: inline-block; font-size: 11px; font-weight: bold; background: #e8e5dc; color: #5f5e5a; border-radius: 4px; padding: 1px 6px; margin-left: 4px; vertical-align: middle; font-family: Georgia, serif; }
+
+  .calc-btn { width: 100%; height: 44px; background: #1a1a18; color: #f7f6f2; border: none; border-radius: 8px; font-family: inherit; font-size: 15px; cursor: pointer; margin-bottom: 8px; transition: background .15s; }
+  .calc-btn:hover { background: #333330; }
+  .warn { font-size: 12px; color: #c0392b; min-height: 18px; font-style: italic; margin-bottom: 1rem; }
+
+  .step-block { background: #fff; border: 1px solid #dddbd2; border-radius: 10px; padding: 1.1rem 1.4rem; margin-bottom: 12px; }
+  .step-title { font-size: 14px; font-weight: bold; color: #1a1a18; margin-bottom: 10px; }
+  .row { display: flex; justify-content: space-between; align-items: baseline; padding: 5px 0; border-bottom: 1px solid #f0ede6; font-size: 13px; }
+  .row:last-child { border-bottom: none; }
+  .row .lname { color: #6b6960; }
+  .row .lval { font-weight: bold; color: #1a1a18; font-variant-numeric: tabular-nums; }
+  .row .lval.hi { color: #1a7a4a; }
+  .row-total { margin-top: 8px; border-top: 1px solid #ccc9be; padding-top: 8px; }
+  .formula-mono { font-size: 11px; color: #888780; font-family: 'Courier New', monospace; margin-top: 6px; line-height: 1.7; }
+
+  .rule-badge { display: inline-block; font-size: 12px; padding: 3px 10px; border-radius: 5px; margin: 8px 0; }
+  .rule-fail { background: #fde8e8; color: #c0392b; }
+  .rule-pass { background: #e8f5e9; color: #1a7a4a; }
+
+  .result-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1rem; }
+  .rcard { background: #f7f6f2; border-radius: 8px; padding: 12px 14px; }
+  .rcard .rlbl { font-size: 11px; color: #888780; margin-bottom: 4px; }
+  .rcard .rnum { font-size: 26px; color: #1a1a18; }
+  .rcard .rnum.green { color: #1a7a4a; }
+  .rcard .rnum.amber { color: #8a5c00; }
+  .rcard .rnum.red   { color: #c0392b; }
+
+  .note { font-size: 12px; color: #888780; font-style: italic; border-top: 1px solid #dddbd2; padding-top: 1rem; margin-top: 1rem; line-height: 1.7; }
+  #results { display: none; margin-top: 1.5rem; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>Grade calculator<small>Microeconomics 1</small></h1>
+
+  <div class="sec">
+    <div class="sec-title">Your grades (0–10)</div>
+    <div class="grid2">
+      <div class="field">
+        <label>Micro Pathway exam 1</label>
+        <input type="number" id="mp1" min="0" max="10" step="0.01" placeholder="0–10" value="">
+      </div>
+      <div class="field">
+        <label>Micro Pathway exam 2</label>
+        <input type="number" id="mp2" min="0" max="10" step="0.01" placeholder="0–10" value="">
+      </div>
+      <div class="field">
+        <label>Midterm exam</label>
+        <input type="number" id="mid" min="0" max="10" step="0.01" placeholder="0–10" value="">
+      </div>
+      <div class="field">
+        <label>Final exam</label>
+        <input type="number" id="fin" min="0" max="10" step="0.01" placeholder="0–10" value="">
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">Grade structure (fixed by instructor)</div>
+    <div class="grid2">
+      <div class="field">
+        <label>AM — adjusted midterm</label>
+        <input type="text" readonly value="max(MP1,M)^¼ · max(MP2,M)^¼ · M^½">
+      </div>
+      <div class="field">
+        <label>AF — adjusted final</label>
+        <input type="text" readonly value="max(MP1,F)^(1/10) · max(MP2,F)^(1/10) · F^(4/5)">
+      </div>
+    </div>
+  </div>
+
+  <button class="calc-btn" id="calc-btn">Calculate my grade</button>
+  <div class="warn" id="warn"></div>
+
+  <div id="results">
+
+    <div class="step-block">
+      <div class="step-title">Step 1 — Adjusted midterm (AM)</div>
+      <div class="row"><span class="lname">MP1M = max(MP1, M)</span><span class="lval" id="p1m">—</span></div>
+      <div class="row"><span class="lname">MP2M = max(MP2, M)</span><span class="lval" id="p2m">—</span></div>
+      <div class="row"><span class="lname">M — Midterm exam</span><span class="lval" id="m-show">—</span></div>
+      <div class="row row-total">
+        <span class="lname"><strong>AM = MP1M<sup>1/4</sup> &middot; MP2M<sup>1/4</sup> &middot; M<sup>1/2</sup></strong></span>
+        <span class="lval hi" id="am-val">—</span>
+      </div>
+      <div class="formula-mono" id="am-formula"></div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-title">Step 2 — Adjusted final (AF)</div>
+      <div class="row"><span class="lname">MP1F = max(MP1, F)</span><span class="lval" id="p1f">—</span></div>
+      <div class="row"><span class="lname">MP2F = max(MP2, F)</span><span class="lval" id="p2f">—</span></div>
+      <div class="row"><span class="lname">F — Final exam</span><span class="lval" id="f-show">—</span></div>
+      <div class="row row-total">
+        <span class="lname"><strong>AF = MP1F<sup>1/10</sup> &middot; MP2F<sup>1/10</sup> &middot; F<sup>4/5</sup></strong></span>
+        <span class="lval hi" id="af-val">—</span>
+      </div>
+      <div class="formula-mono" id="af-formula"></div>
+    </div>
+
+    <div class="step-block">
+      <div class="step-title">Step 3 — Global grade (G)</div>
+      <div class="row"><span class="lname">0.5 &middot; AM + 0.5 &middot; AF</span><span class="lval" id="avg-val">—</span></div>
+      <div class="row"><span class="lname">AF</span><span class="lval" id="af-ref">—</span></div>
+      <div class="row"><span class="lname">max(0.5&middot;AM + 0.5&middot;AF, AF)</span><span class="lval" id="max-val">—</span></div>
+      <div class="row" id="cap-row" style="display:none;"><span class="lname">Cap: F &lt; 4 &rarr; G &le; 4.8</span><span class="lval" id="cap-val">—</span></div>
+      <div><span class="rule-badge" id="rule-badge"></span></div>
+      <div class="row row-total">
+        <span class="lname"><strong>G — Global grade</strong></span>
+        <span class="lval hi" id="g-val" style="font-size:18px;">—</span>
+      </div>
+    </div>
+
+    <div class="result-cards">
+      <div class="rcard"><div class="rlbl">AM (adj. midterm)</div><div class="rnum" id="r-am">—</div></div>
+      <div class="rcard"><div class="rlbl">AF (adj. final)</div><div class="rnum" id="r-af">—</div></div>
+      <div class="rcard"><div class="rlbl">G (global grade)</div><div class="rnum" id="r-g">—</div></div>
+    </div>
+
+    <p class="note">
+      AM and AF are Weighted Geometric Means. The max() terms ensure Micro Pathway exams can only help, never hurt, your midterm and final grades.
+      If F &lt; 4, the global grade is capped at 4.8: G = min(max(0.5&middot;AM + 0.5&middot;AF, AF), 4.8).
+      If F &ge; 4: G = max(0.5&middot;AM + 0.5&middot;AF, AF).
+      A grade of 0 in the Midterm Exam or the Final Exam collapses the adjusted grades, AM and AF, to 0, regardless of the grades MP1 and MP2.
+    </p>
+  </div>
+
+</div>
+<script>
+  function g(id){ return parseFloat(document.getElementById(id).value); }
+  function s(id,v){ document.getElementById(id).textContent = v; }
+  function wgm(vals, ws){ let r=1; vals.forEach((v,i)=>{ r *= Math.pow(v, ws[i]); }); return r; }
+
+  document.getElementById('calc-btn').addEventListener('click', function(){
+    const warn = document.getElementById('warn');
+    warn.textContent = '';
+    const mp1=g('mp1'), mp2=g('mp2'), mid=g('mid'), fin=g('fin');
+    if([mp1,mp2,mid,fin].some(x=>isNaN(x)||x<0||x>10)){
+      warn.textContent='Please enter valid grades between 0 and 10 in all fields.'; return;
+    }
+
+    const p1m=Math.max(mp1,mid), p2m=Math.max(mp2,mid);
+    const p1f=Math.max(mp1,fin), p2f=Math.max(mp2,fin);
+    const AM = wgm([p1m,p2m,mid],[0.25,0.25,0.5]);
+    const AF = wgm([p1f,p2f,fin],[0.1,0.1,0.8]);
+    const avg = 0.5*AM + 0.5*AF;
+    const raw = Math.max(avg, AF);
+    const capApplied = fin < 4;
+    const G = capApplied ? Math.min(raw, 4.8) : raw;
+
+    s('p1m', p1m.toFixed(2)); s('p2m', p2m.toFixed(2)); s('m-show', mid.toFixed(2));
+    s('am-val', AM.toFixed(4));
+    document.getElementById('am-formula').textContent =
+      '= '+p1m.toFixed(2)+'^0.25 \xD7 '+p2m.toFixed(2)+'^0.25 \xD7 '+mid.toFixed(2)+'^0.50 = '+AM.toFixed(4);
+
+    s('p1f', p1f.toFixed(2)); s('p2f', p2f.toFixed(2)); s('f-show', fin.toFixed(2));
+    s('af-val', AF.toFixed(4));
+    document.getElementById('af-formula').textContent =
+      '= '+p1f.toFixed(2)+'^0.10 \xD7 '+p2f.toFixed(2)+'^0.10 \xD7 '+fin.toFixed(2)+'^0.80 = '+AF.toFixed(4);
+
+    s('avg-val', avg.toFixed(4));
+    s('af-ref', AF.toFixed(4));
+    s('max-val', raw.toFixed(4));
+
+    const capRow = document.getElementById('cap-row');
+    if(capApplied){
+      capRow.style.display='flex';
+      s('cap-val','min('+raw.toFixed(4)+', 4.8) = '+G.toFixed(4));
+    } else {
+      capRow.style.display='none';
+    }
+
+    const badge = document.getElementById('rule-badge');
+    badge.textContent = capApplied ? 'F < 4 — grade capped at 4.8' : 'F \u2265 4 — no cap';
+    badge.className = 'rule-badge ' + (capApplied ? 'rule-fail' : 'rule-pass');
+
+    s('g-val', G.toFixed(4));
+    s('r-am', AM.toFixed(2));
+    s('r-af', AF.toFixed(2));
+    s('r-g', G.toFixed(2));
+    document.getElementById('r-g').className = 'rnum ' + (G>=7?'green':G>=5?'amber':'red');
+
+    document.getElementById('results').style.display = 'block';
+  });
+</script>
+</body>
+</html>
