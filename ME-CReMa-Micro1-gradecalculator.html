@@ -57,25 +57,25 @@
 <body>
 <div class="container">
 
-  <h1>Grade calculator<small>Microeconomics 1</small></h1>
+  <h1>Grade calculator<small>UC3M Microeconomics 1 &mdash; Master in Economics and Master in Economics of Competition, Regulation and Market Analysis</small></h1>
 
   <div class="sec">
     <div class="sec-title">Your grades (0–10)</div>
     <div class="grid2">
       <div class="field">
-        <label>Micro Pathway exam 1</label>
+        <label>Intro to Micro Theory exam A (IMTA)</label>
         <input type="number" id="mp1" min="0" max="10" step="0.01" placeholder="0–10" value="">
       </div>
       <div class="field">
-        <label>Micro Pathway exam 2</label>
+        <label>Intro to Micro Theory exam B (IMTB)</label>
         <input type="number" id="mp2" min="0" max="10" step="0.01" placeholder="0–10" value="">
       </div>
       <div class="field">
-        <label>Midterm exam</label>
+        <label>Microeconomics 1 Midterm exam (M)</label>
         <input type="number" id="mid" min="0" max="10" step="0.01" placeholder="0–10" value="">
       </div>
       <div class="field">
-        <label>Final exam</label>
+        <label>Microeconomics 1 Final exam (F)</label>
         <input type="number" id="fin" min="0" max="10" step="0.01" placeholder="0–10" value="">
       </div>
     </div>
@@ -86,11 +86,15 @@
     <div class="grid2">
       <div class="field">
         <label>AM — adjusted midterm</label>
-        <input type="text" readonly value="max(MP1,M)^¼ · max(MP2,M)^¼ · M^½">
+        <input type="text" readonly value="max(IMTA,M)^¼ · max(IMTB,M)^¼ · M^½">
       </div>
       <div class="field">
         <label>AF — adjusted final</label>
-        <input type="text" readonly value="max(MP1,F)^(1/10) · max(MP2,F)^(1/10) · F^(4/5)">
+        <input type="text" readonly value="max(IMTA,F)^(1/10) · max(IMTB,F)^(1/10) · F^(4/5)">
+      </div>
+      <div class="field">
+        <label>G — global grade</label>
+        <input type="text" readonly value="max((1/2)·AM + (1/2)·AF, AF)">
       </div>
     </div>
   </div>
@@ -102,11 +106,11 @@
 
     <div class="step-block">
       <div class="step-title">Step 1 — Adjusted midterm (AM)</div>
-      <div class="row"><span class="lname">MP1M = max(MP1, M)</span><span class="lval" id="p1m">—</span></div>
-      <div class="row"><span class="lname">MP2M = max(MP2, M)</span><span class="lval" id="p2m">—</span></div>
+      <div class="row"><span class="lname">IMTAM = max(IMTA, M)</span><span class="lval" id="p1m">—</span></div>
+      <div class="row"><span class="lname">IMTBM = max(IMTB, M)</span><span class="lval" id="p2m">—</span></div>
       <div class="row"><span class="lname">M — Midterm exam</span><span class="lval" id="m-show">—</span></div>
       <div class="row row-total">
-        <span class="lname"><strong>AM = MP1M<sup>1/4</sup> &middot; MP2M<sup>1/4</sup> &middot; M<sup>1/2</sup></strong></span>
+        <span class="lname"><strong>AM = IMTAM<sup>1/4</sup> &middot; IMTBM<sup>1/4</sup> &middot; M<sup>1/2</sup></strong></span>
         <span class="lval hi" id="am-val">—</span>
       </div>
       <div class="formula-mono" id="am-formula"></div>
@@ -114,11 +118,11 @@
 
     <div class="step-block">
       <div class="step-title">Step 2 — Adjusted final (AF)</div>
-      <div class="row"><span class="lname">MP1F = max(MP1, F)</span><span class="lval" id="p1f">—</span></div>
-      <div class="row"><span class="lname">MP2F = max(MP2, F)</span><span class="lval" id="p2f">—</span></div>
+      <div class="row"><span class="lname">IMTAF = max(IMTA, F)</span><span class="lval" id="p1f">—</span></div>
+      <div class="row"><span class="lname">IMTBF = max(IMTB, F)</span><span class="lval" id="p2f">—</span></div>
       <div class="row"><span class="lname">F — Final exam</span><span class="lval" id="f-show">—</span></div>
       <div class="row row-total">
-        <span class="lname"><strong>AF = MP1F<sup>1/10</sup> &middot; MP2F<sup>1/10</sup> &middot; F<sup>4/5</sup></strong></span>
+        <span class="lname"><strong>AF = IMTAF<sup>1/10</sup> &middot; IMTBF<sup>1/10</sup> &middot; F<sup>4/5</sup></strong></span>
         <span class="lval hi" id="af-val">—</span>
       </div>
       <div class="formula-mono" id="af-formula"></div>
@@ -144,10 +148,10 @@
     </div>
 
     <p class="note">
-      AM and AF are Weighted Geometric Means. The max() terms ensure Micro Pathway exams can only help, never hurt, your midterm and final grades.
+      AM and AF are Weighted Geometric Means. The max() terms ensure Intro to Micro Theory exams can only help, never hurt, your midterm and final grades.
       If F &lt; 4, the global grade is capped at 4.8: G = min(max(0.5&middot;AM + 0.5&middot;AF, AF), 4.8).
       If F &ge; 4: G = max(0.5&middot;AM + 0.5&middot;AF, AF).
-      A grade of 0 in the Midterm Exam or the Final Exam collapses the adjusted grades, AM and AF, to 0, regardless of the grades MP1 and MP2.
+      A grade of 0 in the Midterm Exam or the Final Exam collapses the adjusted grades, AM and AF, to 0, regardless of the grades IMTA and IMTB.
     </p>
   </div>
 
